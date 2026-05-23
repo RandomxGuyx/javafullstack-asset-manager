@@ -61,21 +61,25 @@ function Dashboard() {
     });
   };
 
-  const handleAddAsset = async () => {
+ const handleAddAsset = async () => {
 
-    if (
-      !formData.assetName ||
-      !formData.category ||
-      !formData.serialNumber ||
-      !formData.status
-    ) {
-      alert("Please fill all fields");
-      return;
-    }
+  if (
+    !formData.assetName ||
+    !formData.category ||
+    !formData.serialNumber ||
+    !formData.status
+  ) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  try {
 
     await addAsset(formData);
 
-    fetchAssets();
+    await fetchAssets();
+
+    alert("Asset added successfully");
 
     setFormData({
       assetName: "",
@@ -83,7 +87,25 @@ function Dashboard() {
       serialNumber: "",
       status: "",
     });
-  };
+
+  } catch (error) {
+
+    if (
+      error.response &&
+      error.response.status === 500
+    ) {
+
+      alert("Device already exists with same serial number");
+
+    } else {
+
+      alert("Something went wrong");
+
+    }
+
+    console.error(error);
+  }
+};
 
   const handleDelete = async (id) => {
     await deleteAsset(id);
