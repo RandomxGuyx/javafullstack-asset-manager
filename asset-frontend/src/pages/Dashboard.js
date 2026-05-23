@@ -25,7 +25,8 @@ import {
 } from "../services/AssetService";
 
 import AssetModal from "../components/AssetModal";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function Dashboard() {
 
   const [assets, setAssets] = useState([]);
@@ -69,7 +70,7 @@ function Dashboard() {
     !formData.serialNumber ||
     !formData.status
   ) {
-    alert("Please fill all fields");
+    toast.warning("Please fill all fields");
     return;
   }
 
@@ -79,7 +80,7 @@ function Dashboard() {
 
     await fetchAssets();
 
-    alert("Asset added successfully");
+    toast.success("Asset added successfully");
 
     setFormData({
       assetName: "",
@@ -95,11 +96,11 @@ function Dashboard() {
       error.response.status === 500
     ) {
 
-      alert("Device already exists with same serial number");
+      toast.error("Device already exists");
 
     } else {
 
-      alert("Something went wrong");
+      toast.error("Something went wrong");
 
     }
 
@@ -107,10 +108,23 @@ function Dashboard() {
   }
 };
 
-  const handleDelete = async (id) => {
+ const handleDelete = async (id) => {
+
+  try {
+
     await deleteAsset(id);
-    fetchAssets();
-  };
+
+    await fetchAssets();
+
+    toast.success("Asset deleted successfully");
+
+  } catch (error) {
+
+    toast.error("Delete failed");
+
+    console.error(error);
+  }
+};
 
   const openModal = (asset) => {
     setSelectedAsset(asset);
@@ -174,19 +188,24 @@ function Dashboard() {
 
   return (
 
-    <div className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-cyan-950 text-white p-6">
+    <div className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-cyan-950 text-white p-4 md:p-6">
+
+  <ToastContainer
+    position="top-right"
+    autoClose={3000}
+  />
 
       {/* HEADER */}
 
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex justify-between items-center mb-10"
+   className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10"
       >
 
         <div>
 
-          <h1 className="text-6xl font-black text-cyan-400 tracking-wide">
+          <h1 className="text-3xl md:text-6xl font-black text-cyan-400 tracking-wide">
             Smart Asset Dashboard
           </h1>
 
@@ -201,7 +220,7 @@ function Dashboard() {
           placeholder="Search assets..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="bg-white/10 border border-white/10 px-6 py-4 rounded-3xl outline-none w-80 backdrop-blur-lg"
+          className="bg-white/10 border border-white/10 px-6 py-4 rounded-3xl outline-none w-full md:w-80 backdrop-blur-lg"
         />
 
       </motion.div>
@@ -302,7 +321,7 @@ function Dashboard() {
 
       {/* MIDDLE SECTION */}
 
-      <div className="grid grid-cols-3 gap-8 mb-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10" >
 
         {/* PIE CHART */}
 
@@ -354,14 +373,14 @@ function Dashboard() {
 
         <motion.div
           whileHover={{ scale: 1.01 }}
-          className="col-span-2 bg-white/5 backdrop-blur-xl border border-cyan-500/20 rounded-3xl p-8 shadow-2xl"
+          className="lg:col-span-2 bg-white/5 backdrop-blur-xl border border-cyan-500/20 rounded-3xl p-4 md:p-8 shadow-2xl"
         >
 
-          <h2 className="text-5xl font-black text-cyan-400 mb-8">
+          <h2 className="text-3xl md:text-5xl font-black text-cyan-400 mb-8">
             Add New Asset
           </h2>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             <input
               type="text"
@@ -425,11 +444,12 @@ function Dashboard() {
         className="bg-white/5 backdrop-blur-xl border border-cyan-500/20 rounded-3xl p-6 shadow-2xl"
       >
 
-        <h2 className="text-5xl font-black text-cyan-400 mb-8">
-          Asset Inventory
-        </h2>
+        <h2 className="text-3xl md:text-5xl font-black text-cyan-400 mb-8">
+  Asset Inventory
+</h2>
 
-        <table className="w-full">
+        <div className="overflow-x-auto">
+  <table className="w-full min-w-[700px]">
 
           <thead>
 
@@ -515,7 +535,7 @@ function Dashboard() {
           </tbody>
 
         </table>
-
+</div>
       </motion.div>
 
       <AssetModal
