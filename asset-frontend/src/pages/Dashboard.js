@@ -543,8 +543,34 @@ function Dashboard() {
         closeModal={closeModal}
         asset={selectedAsset}
       />
+<div className="w-full text-center mt-10 pb-6 text-gray-400 flex flex-col gap-2 text-sm md:text-base">
 
-    </div>
+  <p>Developed by Sohel</p>
+
+  <p>📞 9701550108</p>
+
+  <div className="flex justify-center gap-4 mt-2">
+
+    <a
+      href="mailto:smssohel.777@gmail.com"
+      className="bg-cyan-500 hover:bg-cyan-400 text-black px-5 py-2 rounded-full font-semibold transition duration-300 shadow-lg"
+    >
+      Contact Developer
+    </a>
+
+    <a
+      href="tel:9701550108"
+      className="bg-green-500 hover:bg-green-400 text-black px-5 py-2 rounded-full font-semibold transition duration-300 shadow-lg"
+    >
+      Call Developer
+    </a>
+
+  </div>
+
+</div>
+
+</div>
+   
   );
 }
 
