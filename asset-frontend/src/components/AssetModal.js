@@ -1,69 +1,80 @@
 import React from "react";
 import Modal from "react-modal";
+import { FaBarcode, FaBoxOpen, FaLayerGroup, FaTimes } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 Modal.setAppElement("#root");
 
-function AssetModal({
-  isOpen,
-  closeModal,
-  asset,
-}) {
-  if (!asset) return null;
+const statusColor = {
+  Available: "bg-emerald-400/15 text-emerald-200 ring-emerald-300/25",
+  Maintenance: "bg-amber-400/15 text-amber-200 ring-amber-300/25",
+  Assigned: "bg-violet-400/15 text-violet-200 ring-violet-300/25",
+  Damaged: "bg-rose-400/15 text-rose-200 ring-rose-300/25",
+  "Needs Update": "bg-sky-400/15 text-sky-200 ring-sky-300/25",
+};
 
-  const statusColor = {
-    Available: "bg-green-500",
-    Maintenance: "bg-yellow-500",
-    Assigned: "bg-purple-500",
-    Damaged: "bg-red-500",
-    "Needs Update": "bg-cyan-500",
-  };
+function DetailRow({ icon: Icon, label, value }) {
+  return (
+    <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
+      <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
+        <Icon className="text-cyan-200" />
+        {label}
+      </div>
+      <p className="break-words text-lg font-bold text-white">{value}</p>
+    </div>
+  );
+}
+
+function AssetModal({ isOpen, closeModal, asset }) {
+  if (!asset) return null;
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={closeModal}
-      className="bg-gray-900 text-white p-8 rounded-3xl w-[500px] mx-auto mt-32 border border-cyan-500 shadow-2xl outline-none"
-      overlayClassName="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-start"
+      className="mx-4 mt-16 w-full max-w-lg outline-none md:mt-24"
+      overlayClassName="fixed inset-0 z-50 flex justify-center overflow-y-auto bg-black/75 px-2 backdrop-blur-md"
     >
-      <h2 className="text-3xl font-bold text-cyan-400 mb-6">
-        Asset Details
-      </h2>
+      <motion.div
+        initial={{ opacity: 0, y: 18, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.22 }}
+        className="relative rounded-lg border border-white/10 bg-[#0b1020] p-5 text-white shadow-2xl shadow-black/50"
+      >
+        <button
+          onClick={closeModal}
+          className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-slate-400 transition hover:border-cyan-200/50 hover:text-white"
+          aria-label="Close asset details"
+        >
+          <FaTimes />
+        </button>
 
-      <div className="space-y-4 text-lg">
-
-        <div>
-          <span className="text-gray-400">Asset Name:</span>
-          <p className="font-semibold">{asset.assetName}</p>
-        </div>
-
-        <div>
-          <span className="text-gray-400">Category:</span>
-          <p className="font-semibold">{asset.category}</p>
-        </div>
-
-        <div>
-          <span className="text-gray-400">Serial Number:</span>
-          <p className="font-semibold">{asset.serialNumber}</p>
-        </div>
-
-        <div>
-          <span className="text-gray-400">Status:</span>
-
-          <div
-            className={`inline-block px-4 py-2 rounded-full mt-2 text-white font-semibold ${statusColor[asset.status]}`}
+        <div className="pr-12">
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-cyan-200">
+            Asset profile
+          </p>
+          <h2 className="text-3xl font-black leading-tight text-white">
+            {asset.assetName}
+          </h2>
+          <span
+            className={`mt-4 inline-flex rounded-full px-3 py-1 text-xs font-bold ring-1 ${
+              statusColor[asset.status] || statusColor.Available
+            }`}
           >
             {asset.status}
-          </div>
+          </span>
         </div>
 
-      </div>
-
-      <button
-        onClick={closeModal}
-        className="mt-8 bg-cyan-500 hover:bg-cyan-600 px-6 py-3 rounded-xl font-bold transition duration-300"
-      >
-        Close
-      </button>
+        <div className="mt-6 grid gap-3">
+          <DetailRow icon={FaBoxOpen} label="Asset Name" value={asset.assetName} />
+          <DetailRow icon={FaLayerGroup} label="Category" value={asset.category} />
+          <DetailRow
+            icon={FaBarcode}
+            label="Serial Number"
+            value={asset.serialNumber}
+          />
+        </div>
+      </motion.div>
     </Modal>
   );
 }
